@@ -5,6 +5,7 @@ const path = require('path');
 const session = require('express-session');
 const nunjucks = require('nunjucks');
 const dotenv = require('dotenv');
+const {sequelize} = require('./models'); // require('./models/index.js')와 같음
 
 dotenv.config(); // .env 파일을 읽어서 process.env로 만듦
 const pageRouter = require('./routes/page');
@@ -16,6 +17,15 @@ nunjucks.configure('views', {   // 템플릿 파일들이 위치한 폴더를 �
   express: app,
   watch: true,
 });
+
+//시퀼라이즈 연결
+sequelize.sync({ force: false }) // force: true로 설정하면 서버 실행 시마다 테이블을 재생성
+    .then(() => {
+        console.log('데이터베이스 연결 성공');
+    })
+    .catch((err) => {
+        console.error(err);
+    });
 
 app.use(morgan('dev')); //나중에 배포할 때는 combined로 바꾸기
 app.use(express.static(path.join(__dirname, 'public'))); // static 미들웨어는 정적인 파일들을 제공하는 라우터 역할
