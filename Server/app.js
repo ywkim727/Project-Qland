@@ -5,12 +5,16 @@ const path = require('path');
 const session = require('express-session');
 const nunjucks = require('nunjucks');
 const dotenv = require('dotenv');
+const passport = require('passport');
 const {sequelize} = require('./models'); // require('./models/index.js')와 같음
 
 dotenv.config(); // .env 파일을 읽어서 process.env로 만듦
 const pageRouter = require('./routes/page');
+const authRouter = require('./routes/auth');
+const passportConfig = require('./passport');
 
 const app = express();
+passportConfig(); // 패스포트 설정
 app.set('port', process.env.PORT || 8001);
 app.set('view engine', 'html'); // 템플릿 엔진을 html로 설정
 nunjucks.configure('views', {   // 템플릿 파일들이 위치한 폴더를 지정
@@ -29,8 +33,8 @@ sequelize.sync({ force: false }) // force: true로 설정하면 서버 실행 �
 
 app.use(morgan('dev')); //나중에 배포할 때는 combined로 바꾸기
 app.use(express.static(path.join(__dirname, 'public'))); // static 미들웨어는 정적인 파일들을 제공하는 라우터 역할
-app.use(express.json()); // body-parser와 같은 역할
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json()); // req.body를 ajax 요청으로부터
+app.use(express.urlencoded({ extended: false })); // req.body를 form submit 요청으로부터  
 app.use(cookieParser(process.env.COOKIE_SECRET)); // cookie-parser 미들웨어는 요청에 동봉된 쿠키를 해석해 req.cookies 객체로 만듦
 app.use(session({
     resave: false, // 요청이 올 때 세션에 수정사항이 생기지 않더라도 세션을 다시 저장할지 설정
@@ -41,9 +45,13 @@ app.use(session({
         secure: false, // https가 아닌 환경에서도 사용할 수 있도록 설정, https일 경우 true로 설정
     },
     name: 'session-cookie', // 쿠키의 이름을 설정
-    }));
+}));
+app.use(passport.initialize()); //req.user, req.login, req.isAuthenticated 등의 메서드를 추가
+app.use(passport.session());
 
 app.use('/', pageRouter);
+app.use('/auth', authRouter);
+
 app.use((req, res, next) => {   // 404 처리 미들웨어
     const err = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
     err.status = 404;
