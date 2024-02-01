@@ -47,7 +47,7 @@ app.use(session({
     name: 'session-cookie', // 쿠키의 이름을 설정
 }));
 app.use(passport.initialize()); //req.user, req.login, req.isAuthenticated 등의 메서드를 추가
-app.use(passport.session());
+app.use(passport.session());    // connect.sid라는 이름으로 세션 쿠키가 브라우저로 전송
 
 app.use('/', pageRouter);
 app.use('/auth', authRouter);
