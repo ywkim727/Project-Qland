@@ -42,6 +42,7 @@ exports.login = (req, res, next) => {
     })(req, res, next); // 미들웨어 확장패턴
 }
 
+
 exports.logout = (req, res, next) => {
     req.logout(() => {
         res.redirect('/');
