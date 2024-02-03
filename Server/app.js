@@ -11,6 +11,7 @@ const {sequelize} = require('./models'); // require('./models/index.js')와 같�
 dotenv.config(); // .env 파일을 읽어서 process.env로 만듦
 const pageRouter = require('./routes/page');
 const authRouter = require('./routes/auth');
+const postRouter = require('./routes/post');
 const passportConfig = require('./passport');
 
 const app = express();
@@ -33,6 +34,7 @@ sequelize.sync({ force: false }) // force: true로 설정하면 서버 실행 �
 
 app.use(morgan('dev')); //나중에 배포할 때는 combined로 바꾸기
 app.use(express.static(path.join(__dirname, 'public'))); // static 미들웨어는 정적인 파일들을 제공하는 라우터 역할
+app.use('/img', express.static(path.join(__dirname, 'uploads'))); // uploads 폴더를 /img 주소로 접근할 수 있게 함
 app.use(express.json()); // req.body를 ajax 요청으로부터
 app.use(express.urlencoded({ extended: false })); // req.body를 form submit 요청으로부터  
 app.use(cookieParser(process.env.COOKIE_SECRET)); // cookie-parser 미들웨어는 요청에 동봉된 쿠키를 해석해 req.cookies 객체로 만듦
@@ -51,6 +53,7 @@ app.use(passport.session());    // connect.sid라는 이름으로 세션 쿠키�
 
 app.use('/', pageRouter);
 app.use('/auth', authRouter);
+app.use('/post', postRouter);
 
 app.use((req, res, next) => {   // 404 처리 미들웨어
     const err = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
