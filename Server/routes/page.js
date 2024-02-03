@@ -8,6 +8,7 @@ router.use((req, res, next) => {   // 모든 라우터에 공통으로 적용되
     res.locals.followerCount = 0;
     res.locals.followingCount = 0;
     res.locals.followerIdList = [];
+    res.locals.followingIdList = [];
     next(); // next 함수를 호출해야 다음 미들웨어로 넘어감
 });
 
