@@ -12,7 +12,7 @@ exports.renderMain = async (req, res, next) => {
             order: [['createdAt', 'DESC']], // 최신순으로 정렬, DESC는 내림차순, ASC는 오름차순
         });
         res.render('main', {
-            title: 'NodeBird',
+            title: 'Qland',
             twits: posts,
         });
     } catch (error) {
@@ -44,7 +44,7 @@ exports.renderHashtag = async (req, res, next) => {
             });
         }
         res.render('main', {
-            title: `${query} | NodeBird`,
+            title: `${query} | Qland`,
             twits: posts,
         }); 
     } catch (error) {
