@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {renderMain, renderJoin, renderProfile, renderHashtag } = require('../controllers/page');
+const { renderMain, renderJoin, renderProfile, renderHashtag } = require('../controllers/page');
 const { isLoggedIn, isNotLoggedIn } = require('../middlewares');
 
 router.use((req, res, next) => {   // 모든 라우터에 공통으로 적용되는 미들웨어
